@@ -183,7 +183,7 @@ class PoUWBlockchainNetwork:
         for miner in self.miners:
             route, metric, iters, duration = miner.solve_useful_work(task, prev_block.block_hash)
             tipo = "Lazy" if miner.is_malicious else "Honesto"
-            print(f"  Minero {miner.miner_id:<22} ({tipo:<7}): distancia = {metric:<7} | iteraciones = {iters:<5} | tiempo = {duration:.4f}s")
+            print(f"  Minero {miner.miner_id:<12} ({tipo:<7}): distancia = {metric:<7} | iteraciones = {iters:<5} | tiempo = {duration:.4f}s")
 
             if not miner.is_malicious and metric <= task.target_distance and duration < best_time:
                 best_miner = miner
@@ -257,10 +257,10 @@ def run_demo():
 
     network = PoUWBlockchainNetwork()
 
-    # Registro de mineros (Gabriel y Tomas honestos, Sousa Xulio Xulio atacante)
-    network.register_miner(MinerNode(miner_id="Miner-Gabriel", compute_power=8))
-    network.register_miner(MinerNode(miner_id="Miner-Tomas", compute_power=9))
-    network.register_miner(MinerNode(miner_id="Miner-Sousa-Xulio", compute_power=10, is_malicious=True))
+    # Registro de mineros (Gabriel y Tomas honestos, Xulio atacante)
+    network.register_miner(MinerNode(miner_id="Gabriel", compute_power=8))
+    network.register_miner(MinerNode(miner_id="Tomas", compute_power=9))
+    network.register_miner(MinerNode(miner_id="Xulio", compute_power=10, is_malicious=True))
 
     # Tareas utiles
     network.submit_useful_task(UsefulTask.generate_random_task(1, num_cities=9, difficulty_factor=1.12))
@@ -279,7 +279,7 @@ def run_demo():
     print("\nBalance de mineros:")
     for m in network.miners:
         rol = "Malicioso" if m.is_malicious else "Honesto"
-        print(f"  {m.miner_id:<22} ({rol:<9}): {m.blocks_mined} bloques | {m.rewards_earned} PoUW Tokens")
+        print(f"  {m.miner_id:<12} ({rol:<9}): {m.blocks_mined} bloques | {m.rewards_earned} PoUW Tokens")
 
 
 if __name__ == "__main__":
