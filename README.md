@@ -54,62 +54,62 @@ python3 pouw_simulation.py
 
 Al ejecutarse, el sistema inicializa el **Bloque Génesis** y simula de forma consecutiva **3 rondas de consenso** con tareas de dificultad variable:
 
-1. **Ronda 1 (`TASK-AI-LOGISTICS-001`):** Tarea logística para 9 puntos de entrega. Los mineros honestos optimizan sus rutas y el bloque es adjudicado al nodo con mejor solución válida.
+1. **Ronda 1 (`TASK-AI-LOGISTICS-001`):** Tarea logística para 9 puntos de entrega. El minero honesto **Gabriel** optimiza la ruta mediante 2-opt, cumple el umbral ($357.30 \le 358.46$) y se adjudica el Bloque #1 (10 tokens).
 2. **Ronda 2 (`TASK-AI-LOGISTICS-002` - Demostración de Ciberseguridad):**
    * El minero malicioso (**Xulio**) intenta propagar un bloque fraudulento sin optimizar (*Lazy Miner*), buscando cobrar la recompensa sin consumir tiempo de CPU.
-   * La red recalcula la métrica real de la ruta, detecta que supera el umbral máximo exigido ($601.77 > 298.45$) y **rechaza el bloque de inmediato**.
-   * El minero honesto (**Tomás** / **Gabriel**) presenta una solución válida ($291.98 \le 298.45$) que es **aceptada y encadenada**.
-3. **Ronda 3 (`TASK-AI-LOGISTICS-003`):** Nueva ronda de optimización ganada por el minero honesto.
-4. **Resumen de la Cadena y Balance Económico:** Muestra la inmutabilidad de la cadena (4 bloques en total) y certifica que los nodos honestos (**Gabriel** y **Tomás**) perciben los tokens de recompensa, mientras el atacante (**Xulio**) finaliza con saldo cero.
+   * La red recalcula la métrica real de la ruta, detecta que supera el umbral máximo exigido ($610.84 > 310.33$) y **rechaza el bloque de inmediato**.
+   * El minero honesto (**Tomás**) presenta una solución válida ($294.58 \le 310.33$) que es **aceptada y encadenada** en el Bloque #2 (10 tokens).
+3. **Ronda 3 (`TASK-AI-LOGISTICS-003`):** Nueva ronda de optimización ganada por el minero honesto **Tomás** ($344.14 \le 355.59$) para el Bloque #3 (10 tokens).
+4. **Resumen de la Cadena y Balance Económico:** Muestra la inmutabilidad de la cadena (4 bloques en total) y certifica que los nodos honestos perciben los tokens de recompensa (**Gabriel**: 1 bloque / 10 tokens, **Tomás**: 2 bloques / 20 tokens), mientras el atacante (**Xulio**) finaliza con saldo cero.
 
-### Salida Real de Consola
+### Salida Real de Consola (Ejecución en Vivo)
 
 ```text
 Simulacion de Consenso Proof of Useful Work (PoUW)
 Problema: Optimizacion de rutas logisticas (TSP) mediante 2-opt
 
 Ronda 1: Tarea TASK-AI-LOGISTICS-001 (Hospital Central / Reparto Medico #1)
-  Objetivo: distancia <= 340.17
-  Minero Gabriel      (Honesto): distancia = 325.02  | iteraciones = 23    | tiempo = 0.0004s
-  Minero Tomas        (Honesto): distancia = 338.26  | iteraciones = 1     | tiempo = 0.0001s
-  Minero Xulio        (Lazy   ): distancia = 388.7   | iteraciones = 0     | tiempo = 0.0108s
-  Bloque #1 propuesto por Tomas: ACEPTADO
-    Metrica alcanzada: 338.26 (umbral <= 340.17)
-    Tiempo busqueda (minero): 0.0001s
-    Tiempo verificacion (red): 0.000100s
+  Objetivo: distancia <= 358.46
+  Minero Gabriel      (Honesto): distancia = 357.3   | iteraciones = 21    | tiempo = 0.0007s
+  Minero Tomas        (Honesto): distancia = 354.14  | iteraciones = 51    | tiempo = 0.0013s
+  Minero Xulio        (Lazy   ): distancia = 472.38  | iteraciones = 0     | tiempo = 0.0105s
+  Bloque #1 propuesto por Gabriel: ACEPTADO
+    Metrica alcanzada: 357.3 (umbral <= 358.46)
+    Tiempo busqueda (minero): 0.0007s
+    Tiempo verificacion (red): 0.000101s
 
 Ronda 2: Tarea TASK-AI-LOGISTICS-002 (Hospital Central / Reparto Medico #2)
-  Objetivo: distancia <= 298.45
-  Minero Gabriel      (Honesto): distancia = 271.32  | iteraciones = 63    | tiempo = 0.0012s
-  Minero Tomas        (Honesto): distancia = 291.98  | iteraciones = 54    | tiempo = 0.0008s
-  Minero Xulio        (Lazy   ): distancia = 601.77  | iteraciones = 0     | tiempo = 0.0103s
+  Objetivo: distancia <= 310.33
+  Minero Gabriel      (Honesto): distancia = 307.46  | iteraciones = 98    | tiempo = 0.0021s
+  Minero Tomas        (Honesto): distancia = 294.58  | iteraciones = 45    | tiempo = 0.0011s
+  Minero Xulio        (Lazy   ): distancia = 610.84  | iteraciones = 0     | tiempo = 0.0104s
 
   Intento de propagacion de bloque por Xulio (Lazy Miner):
-  Verificacion de la red: RECHAZADO -> Distancia 601.77 supera el umbral (298.45)
+  Verificacion de la red: RECHAZADO -> Distancia 610.84 supera el umbral (310.33)
   Bloque #2 propuesto por Tomas: ACEPTADO
-    Metrica alcanzada: 291.98 (umbral <= 298.45)
-    Tiempo busqueda (minero): 0.0008s
-    Tiempo verificacion (red): 0.000036s
+    Metrica alcanzada: 294.58 (umbral <= 310.33)
+    Tiempo busqueda (minero): 0.0011s
+    Tiempo verificacion (red): 0.000032s
 
 Ronda 3: Tarea TASK-AI-LOGISTICS-003 (Hospital Central / Reparto Medico #3)
-  Objetivo: distancia <= 300.32
-  Minero Gabriel      (Honesto): distancia = 298.76  | iteraciones = 25    | tiempo = 0.0005s
-  Minero Tomas        (Honesto): distancia = 292.51  | iteraciones = 8     | tiempo = 0.0002s
-  Minero Xulio        (Lazy   ): distancia = 478.36  | iteraciones = 0     | tiempo = 0.0101s
+  Objetivo: distancia <= 355.59
+  Minero Gabriel      (Honesto): distancia = 353.2   | iteraciones = 16    | tiempo = 0.0005s
+  Minero Tomas        (Honesto): distancia = 344.14  | iteraciones = 7     | tiempo = 0.0002s
+  Minero Xulio        (Lazy   ): distancia = 473.63  | iteraciones = 0     | tiempo = 0.0106s
   Bloque #3 propuesto por Tomas: ACEPTADO
-    Metrica alcanzada: 292.51 (umbral <= 300.32)
+    Metrica alcanzada: 344.14 (umbral <= 355.59)
     Tiempo busqueda (minero): 0.0002s
-    Tiempo verificacion (red): 0.000051s
+    Tiempo verificacion (red): 0.000058s
 
 Resumen final de la cadena:
 Bloques en la cadena: 4 (1 Genesis + 3 bloques utiles)
-  Bloque #1: TASK-AI-LOGISTICS-001 | Minero: Tomas | Distancia: 338.26
-  Bloque #2: TASK-AI-LOGISTICS-002 | Minero: Tomas | Distancia: 291.98
-  Bloque #3: TASK-AI-LOGISTICS-003 | Minero: Tomas | Distancia: 292.51
+  Bloque #1: TASK-AI-LOGISTICS-001 | Minero: Gabriel | Distancia: 357.3
+  Bloque #2: TASK-AI-LOGISTICS-002 | Minero: Tomas | Distancia: 294.58
+  Bloque #3: TASK-AI-LOGISTICS-003 | Minero: Tomas | Distancia: 344.14
 
 Balance de mineros:
-  Gabriel      (Honesto  ): 0 bloques | 0.0 PoUW Tokens
-  Tomas        (Honesto  ): 3 bloques | 30.0 PoUW Tokens
+  Gabriel      (Honesto  ): 1 bloques | 10.0 PoUW Tokens
+  Tomas        (Honesto  ): 2 bloques | 20.0 PoUW Tokens
   Xulio        (Malicioso): 0 bloques | 0.0 PoUW Tokens
 ```
 
