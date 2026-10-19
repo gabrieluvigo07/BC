@@ -1,0 +1,32 @@
+Simulacion PoUW: rutas de reparto (TSP) con 2-opt  [semilla 24]
+
+Ronda 1: RUTA-001 (Reparto medico #1, 9 puntos)
+  Umbral: distancia <= 346.97
+  Gabriel  distancia 306.59  |    61 iteraciones | busqueda    0.94 ms | verificacion 0.025 ms -> valido
+  Tomas    distancia 310.2   |     4 iteraciones | busqueda    0.09 ms | verificacion 0.019 ms -> valido
+  Xulio    distancia 484.86  |     0 iteraciones | busqueda    0.01 ms | verificacion 0.020 ms -> RECHAZADO: 484.86 supera el umbral 346.97
+  -> Bloque #1 para Tomas (4 iteraciones, distancia 310.2)
+
+Ronda 2: RUTA-002 (Reparto medico #2, 10 puntos)
+  Umbral: distancia <= 317.02
+  Gabriel  distancia 296.43  |   137 iteraciones | busqueda    1.82 ms | verificacion 0.021 ms -> valido
+  Tomas    distancia 292.25  |    39 iteraciones | busqueda    0.53 ms | verificacion 0.018 ms -> valido
+  Xulio    distancia 577.38  |     0 iteraciones | busqueda    0.01 ms | verificacion 0.019 ms -> RECHAZADO: 577.38 supera el umbral 317.02
+  -> Bloque #2 para Tomas (39 iteraciones, distancia 292.25)
+
+Ronda 3: RUTA-003 (Reparto medico #3, 8 puntos)
+  Umbral: distancia <= 336.87
+  Gabriel  distancia 314.02  |     2 iteraciones | busqueda    0.09 ms | verificacion 0.017 ms -> valido
+  Tomas    distancia 331.53  |    12 iteraciones | busqueda    0.16 ms | verificacion 0.017 ms -> valido
+  Xulio    distancia 455.97  |     0 iteraciones | busqueda    0.01 ms | verificacion 0.018 ms -> RECHAZADO: 455.97 supera el umbral 336.87
+  -> Bloque #3 para Gabriel (2 iteraciones, distancia 314.02)
+
+Cadena final: 4 bloques (genesis + 3)
+  #1 RUTA-001  minero Tomas    distancia 310.2  hash 8cf5b94ce3d4...
+  #2 RUTA-002  minero Tomas    distancia 292.25  hash f22d86bc98a8...
+  #3 RUTA-003  minero Gabriel  distancia 314.02  hash ddfa462812bb...
+
+Balance:
+  Gabriel  bloques: 1   tokens: 10
+  Tomas    bloques: 2   tokens: 20
+  Xulio    bloques: 0   tokens: 0
