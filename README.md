@@ -1,6 +1,6 @@
 # Trabajo Colaborativo I: Simulación de Consenso Proof of Useful Work (PoUW)
 
-Este proyecto implementa una simulación experimental de un protocolo de consenso **Proof of Useful Work (PoUW)** orientado a tareas computacionales útiles del mundo real. El sistema modela la resolución distribuida de problemas de optimización combinatoria (Problema del Viajante de Comercio / TSP aplicado a logística médica urgente), demostrando empíricamente la propiedad de **asimetría computacional** (búsqueda heurística intensiva frente a verificación ligera $O(N)$) y la **neutralización activa de ataques de mineros perezosos (*Lazy Miner Attack*)**.
+Este proyecto implementa una simulación de un protocolo de consenso **Proof of Useful Work (PoUW)** orientado a tareas computacionales útiles. El sistema modela la resolución de un problema de optimización combinatoria (Problema del Viajante de Comercio / TSP aplicado a rutas de reparto médico) para mostrar la **asimetría computacional** (búsqueda heurística costosa frente a verificación lineal, O(N)) y el **rechazo de mineros perezosos (*Lazy Miner Attack*)**.
 
 * **Asignatura:** Tecnologías de Registro Distribuido y Blockchain (BC)
 * **Titulación:** Máster Universitario en Ciberseguridad · Universidade de Vigo (UVigo)
@@ -12,22 +12,23 @@ Este proyecto implementa una simulación experimental de un protocolo de consens
 
 ## 1. Estructura del Repositorio
 
-* **`pouw_simulation.py`**: Script principal en Python 3 que implementa la arquitectura completa del consenso PoUW:
-  * Generación y registro de tareas útiles externas (`UsefulTask`).
-  * Estructura e integridad de los bloques de la cadena (`Block`).
-  * Nodos mineros con perfiles honestos y maliciosos (`MinerNode`).
-  * Red de consenso y verificación de dificultad métrica (`PoUWBlockchainNetwork`).
-* **`README.md`**: Documentación técnica, fundamentos algorítmicos y guía de ejecución.
-* **`Entregas/`**: Material complementario de entrega, incluyendo la presentación oficial en diapositivas (`PoUW_presentacion_v5.pptx`) y notas de soporte.
+* **`pouw_simulation.py`**: script principal en Python 3 con todo el consenso PoUW:
+  * Tareas útiles del cliente: puntos de entrega y umbral de distancia (`Tarea`).
+  * Bloques de la cadena y su hash SHA-256 (`Bloque`).
+  * Mineros honestos y perezosos (`Minero`).
+  * Red de consenso: verificación de bloques y rondas de minado (`Red`).
+* **`salida_ejemplo.txt`**: salida completa del script con la semilla por defecto (24).
+* **`README.md`**: documentación, fundamentos y guía de ejecución.
+* **`Entregas/`**: material de entrega (presentación y notas de apoyo).
 
 ---
 
 ## 2. Requisitos e Instalación
 
-El simulador ha sido desarrollado en **Python 3** utilizando exclusivamente la **librería estándar**, sin requerir dependencias externas ni compiladores nativos.
+El simulador está hecho en **Python 3** usando solo la **librería estándar**, sin dependencias externas.
 
-* **Requisitos del sistema:** Python 3.8 o superior.
-* **Módulos empleados:** `hashlib`, `json`, `random`, `time`, `dataclasses`, `typing`.
+* **Requisitos:** Python 3.8 o superior.
+* **Módulos empleados:** `hashlib`, `json`, `random`, `sys`, `time`, `dataclasses`.
 
 Para clonar el repositorio:
 
@@ -40,77 +41,74 @@ cd BC
 
 ## 3. Guía de Ejecución
 
-El script se ejecuta directamente desde la terminal del sistema:
-
 ```bash
 # En Windows (PowerShell / CMD):
 py pouw_simulation.py
 
 # En Linux / macOS:
 python3 pouw_simulation.py
+
+# Con otra semilla (genera otras rutas y otros resultados):
+python3 pouw_simulation.py 5
 ```
+
+Por defecto se usa la **semilla 24**, la de la presentación. Con la misma semilla las distancias, las iteraciones y los ganadores salen siempre iguales; solo cambian los tiempos en ms, que dependen del equipo.
 
 ### Flujo de la Simulación
 
-Al ejecutarse, el sistema inicializa el **Bloque Génesis** y simula de forma consecutiva **3 rondas de consenso** con tareas de dificultad variable:
+El sistema crea el **bloque génesis** y simula **3 rondas de consenso** (9, 10 y 8 puntos de entrega). En cada ronda:
 
-1. **Ronda 1 (`TASK-AI-LOGISTICS-001`):** Tarea logística para 9 puntos de entrega. El minero honesto **Gabriel** optimiza la ruta mediante 2-opt, cumple el umbral ($357.30 \le 358.46$) y se adjudica el Bloque #1 (10 tokens).
-2. **Ronda 2 (`TASK-AI-LOGISTICS-002` - Demostración de Ciberseguridad):**
-   * El minero malicioso (**Xulio**) intenta propagar un bloque fraudulento sin optimizar (*Lazy Miner*), buscando cobrar la recompensa sin consumir tiempo de CPU.
-   * La red recalcula la métrica real de la ruta, detecta que supera el umbral máximo exigido ($610.84 > 310.33$) y **rechaza el bloque de inmediato**.
-   * El minero honesto (**Tomás**) presenta una solución válida ($294.58 \le 310.33$) que es **aceptada y encadenada** en el Bloque #2 (10 tokens).
-3. **Ronda 3 (`TASK-AI-LOGISTICS-003`):** Nueva ronda de optimización ganada por el minero honesto **Tomás** ($344.14 \le 355.59$) para el Bloque #3 (10 tokens).
-4. **Resumen de la Cadena y Balance Económico:** Muestra la inmutabilidad de la cadena (4 bloques en total) y certifica que los nodos honestos perciben los tokens de recompensa (**Gabriel**: 1 bloque / 10 tokens, **Tomás**: 2 bloques / 20 tokens), mientras el atacante (**Xulio**) finaliza con saldo cero.
+* Los mineros honestos **Gabriel** y **Tomás** buscan la ruta con **2-opt**. La semilla de su búsqueda se obtiene del hash del bloque anterior.
+* El minero perezoso **Xulio** envía la ruta en el orden inicial, sin optimizar.
+* La red **no sabe quién es honesto**: verifica todas las propuestas igual (hash, enlace con el último bloque, distancia real y umbral).
+* Entre los bloques válidos gana el que ha necesitado **menos iteraciones** (con la misma potencia, el que terminaría antes). El ganador recibe 10 tokens.
 
-### Salida Real de Consola (Ejecución en Vivo)
+Resultado con la semilla 24:
+
+1. **Ronda 1 (`RUTA-001`):** Gabriel (306.59) y Tomás (310.2) cumplen el umbral (346.97). Gana **Tomás** con 4 iteraciones. Xulio (484.86) es rechazado.
+2. **Ronda 2 (`RUTA-002`), la que se muestra en la presentación:**
+   * Umbral: 317.02.
+   * Gabriel: 296.43 en 137 iteraciones (válido).
+   * Tomás: 292.25 en 39 iteraciones (válido). **Gana el bloque #2**.
+   * Xulio: 577.38 > 317.02, **rechazado** al recalcular la distancia.
+3. **Ronda 3 (`RUTA-003`):** gana **Gabriel** (314.02 ≤ 336.87) con 2 iteraciones. Xulio (455.97) es rechazado.
+4. **Balance final:** Gabriel 1 bloque / 10 tokens, Tomás 2 bloques / 20 tokens, Xulio 0.
+
+### Salida Real de Consola (semilla 24)
 
 ```text
-Simulacion de Consenso Proof of Useful Work (PoUW)
-Problema: Optimizacion de rutas logisticas (TSP) mediante 2-opt
+Simulacion PoUW: rutas de reparto (TSP) con 2-opt  [semilla 24]
 
-Ronda 1: Tarea TASK-AI-LOGISTICS-001 (Hospital Central / Reparto Medico #1)
-  Objetivo: distancia <= 358.46
-  Minero Gabriel      (Honesto): distancia = 357.3   | iteraciones = 21    | tiempo = 0.0007s
-  Minero Tomas        (Honesto): distancia = 354.14  | iteraciones = 51    | tiempo = 0.0013s
-  Minero Xulio        (Lazy   ): distancia = 472.38  | iteraciones = 0     | tiempo = 0.0105s
-  Bloque #1 propuesto por Gabriel: ACEPTADO
-    Metrica alcanzada: 357.3 (umbral <= 358.46)
-    Tiempo busqueda (minero): 0.0007s
-    Tiempo verificacion (red): 0.000101s
+Ronda 1: RUTA-001 (Reparto medico #1, 9 puntos)
+  Umbral: distancia <= 346.97
+  Gabriel  distancia 306.59  |    61 iteraciones | busqueda    0.94 ms | verificacion 0.025 ms -> valido
+  Tomas    distancia 310.2   |     4 iteraciones | busqueda    0.09 ms | verificacion 0.019 ms -> valido
+  Xulio    distancia 484.86  |     0 iteraciones | busqueda    0.01 ms | verificacion 0.020 ms -> RECHAZADO: 484.86 supera el umbral 346.97
+  -> Bloque #1 para Tomas (4 iteraciones, distancia 310.2)
 
-Ronda 2: Tarea TASK-AI-LOGISTICS-002 (Hospital Central / Reparto Medico #2)
-  Objetivo: distancia <= 310.33
-  Minero Gabriel      (Honesto): distancia = 307.46  | iteraciones = 98    | tiempo = 0.0021s
-  Minero Tomas        (Honesto): distancia = 294.58  | iteraciones = 45    | tiempo = 0.0011s
-  Minero Xulio        (Lazy   ): distancia = 610.84  | iteraciones = 0     | tiempo = 0.0104s
+Ronda 2: RUTA-002 (Reparto medico #2, 10 puntos)
+  Umbral: distancia <= 317.02
+  Gabriel  distancia 296.43  |   137 iteraciones | busqueda    1.82 ms | verificacion 0.021 ms -> valido
+  Tomas    distancia 292.25  |    39 iteraciones | busqueda    0.53 ms | verificacion 0.018 ms -> valido
+  Xulio    distancia 577.38  |     0 iteraciones | busqueda    0.01 ms | verificacion 0.019 ms -> RECHAZADO: 577.38 supera el umbral 317.02
+  -> Bloque #2 para Tomas (39 iteraciones, distancia 292.25)
 
-  Intento de propagacion de bloque por Xulio (Lazy Miner):
-  Verificacion de la red: RECHAZADO -> Distancia 610.84 supera el umbral (310.33)
-  Bloque #2 propuesto por Tomas: ACEPTADO
-    Metrica alcanzada: 294.58 (umbral <= 310.33)
-    Tiempo busqueda (minero): 0.0011s
-    Tiempo verificacion (red): 0.000032s
+Ronda 3: RUTA-003 (Reparto medico #3, 8 puntos)
+  Umbral: distancia <= 336.87
+  Gabriel  distancia 314.02  |     2 iteraciones | busqueda    0.09 ms | verificacion 0.017 ms -> valido
+  Tomas    distancia 331.53  |    12 iteraciones | busqueda    0.16 ms | verificacion 0.017 ms -> valido
+  Xulio    distancia 455.97  |     0 iteraciones | busqueda    0.01 ms | verificacion 0.018 ms -> RECHAZADO: 455.97 supera el umbral 336.87
+  -> Bloque #3 para Gabriel (2 iteraciones, distancia 314.02)
 
-Ronda 3: Tarea TASK-AI-LOGISTICS-003 (Hospital Central / Reparto Medico #3)
-  Objetivo: distancia <= 355.59
-  Minero Gabriel      (Honesto): distancia = 353.2   | iteraciones = 16    | tiempo = 0.0005s
-  Minero Tomas        (Honesto): distancia = 344.14  | iteraciones = 7     | tiempo = 0.0002s
-  Minero Xulio        (Lazy   ): distancia = 473.63  | iteraciones = 0     | tiempo = 0.0106s
-  Bloque #3 propuesto por Tomas: ACEPTADO
-    Metrica alcanzada: 344.14 (umbral <= 355.59)
-    Tiempo busqueda (minero): 0.0002s
-    Tiempo verificacion (red): 0.000058s
+Cadena final: 4 bloques (genesis + 3)
+  #1 RUTA-001  minero Tomas    distancia 310.2  hash 8cf5b94ce3d4...
+  #2 RUTA-002  minero Tomas    distancia 292.25  hash f22d86bc98a8...
+  #3 RUTA-003  minero Gabriel  distancia 314.02  hash ddfa462812bb...
 
-Resumen final de la cadena:
-Bloques en la cadena: 4 (1 Genesis + 3 bloques utiles)
-  Bloque #1: TASK-AI-LOGISTICS-001 | Minero: Gabriel | Distancia: 357.3
-  Bloque #2: TASK-AI-LOGISTICS-002 | Minero: Tomas | Distancia: 294.58
-  Bloque #3: TASK-AI-LOGISTICS-003 | Minero: Tomas | Distancia: 344.14
-
-Balance de mineros:
-  Gabriel      (Honesto  ): 1 bloques | 10.0 PoUW Tokens
-  Tomas        (Honesto  ): 2 bloques | 20.0 PoUW Tokens
-  Xulio        (Malicioso): 0 bloques | 0.0 PoUW Tokens
+Balance:
+  Gabriel  bloques: 1   tokens: 10
+  Tomas    bloques: 2   tokens: 20
+  Xulio    bloques: 0   tokens: 0
 ```
 
 ---
@@ -119,50 +117,54 @@ Balance de mineros:
 
 ### A. La Regla de Asimetría Computacional
 
-Para que una tarea computacional sea admisible en un consenso blockchain descentralizado, debe satisfacer la cota de asimetría:
+Para que una tarea pueda formar parte de un consenso, encontrar una solución tiene que costar bastante más que comprobarla:
 
-$$\text{Coste de Búsqueda} \gg \text{Coste de Verificación}$$
+**Coste de búsqueda ≫ Coste de verificación**
 
-* **Fase de Búsqueda (Minero):** El problema TSP es de complejidad $NP$-hard. Los mineros honestos aplican la **heurística 2-opt**, un algoritmo de búsqueda local iterativa que detecta tramos de ruta cruzados en "X", invierte subrutas intermedias y reconecta caminos en paralelo para recortar la distancia global de forma monótona decreciente.
-* **Fase de Verificación (Red):** Los nodos validadores no repiten la búsqueda heurística; se limitan a recorrer la permutación entregada sumando las distancias euclidianas entre vértices consecutivos en tiempo lineal $O(N)$ y comparando el resultado frente al umbral publicado por el cliente.
+* **Búsqueda (minero):** el TSP es NP-hard. Los mineros honestos aplican **2-opt**: eligen dos posiciones de la ruta, invierten el tramo entre ellas y se quedan con el cambio si la distancia baja. Repiten hasta cumplir el umbral o agotar sus iteraciones (`potencia × 10000`).
+* **Verificación (red):** los nodos no repiten la búsqueda. Recorren la ruta entregada sumando las distancias euclídeas entre puntos consecutivos, en tiempo lineal O(N), y comparan el resultado con lo declarado y con el umbral.
 
 ### B. Pseudocódigo del Mecanismo Asimétrico
 
 ```plaintext
-Columna 1: Minero (Cómputo Pesado)
-Minar_PoUW (tarea T):
-  ruta = ruta_aleatoria(T.ciudades)
-  Mientras coste(ruta) > T.umbral:
-    nueva_ruta = permutar_2opt(ruta)
-    Si coste(nueva_ruta) < coste(ruta):
-      ruta = nueva_ruta
-  Devolver Bloque(ruta, coste(ruta), hash)
+Minero (cómputo pesado)
+Minar(T, hash_previo):
+  semilla = H(hash_previo + minero)
+  ruta = barajar(T.puntos, semilla)
+  iter = 0
+  mientras coste(ruta) > T.umbral y iter < max_iter:
+    iter += 1
+    nueva = 2opt(ruta)            # invierte el tramo i..j
+    si coste(nueva) < coste(ruta):
+      ruta = nueva
+  devolver Bloque(ruta, coste(ruta))
 
-Columna 2: Red (Verificación O(N))
-Verificar_Bloque (bloque B, tarea T):
-  Verificar integridad de B.hash
-  d_real = calcular_distancia(B.ruta)
-  Si d_real == B.coste Y d_real <= T.umbral:
-    Aceptar bloque en Blockchain y pagar
-  Si no:
-    Rechazar bloque (Neutraliza Lazy Miner)
+Red (verificación O(N))
+Verificar(B, T):
+  si B.hash != H(B): rechazar
+  si B.hash_previo != último bloque: rechazar
+  d = distancia(T.puntos, B.ruta)
+  si |d - B.coste| > 0,01: rechazar   # distancia falseada
+  si d > T.umbral: rechazar           # caso de Xulio
+  aceptar bloque
+# entre los válidos gana el de menos iteraciones y cobra 10 tokens
 ```
 
 ### C. Vectores de Ataque Modelados
 
-1. **Lazy Miner Attack:**  
-   Un minero no gasta ciclos de reloj y remite una ruta trivial (`[0, 1, ..., N-1]`) esperando cobrar la recompensa de bloque. La red neutraliza el ataque recalculando la métrica y descartando el bloque antes de su propagación definitiva (caso **Xulio** en la simulación).
-2. **Resistencia a Precomputación (Anti-Grinding):**  
-   Cada bloque encadena criptográficamente el `previous_hash` dentro de la función de hash del bloque resultante (`SHA-256`), vinculando el estado del problema al bloque previo e impidiendo que un minero calcule soluciones de rondas futuras por adelantado.
-3. **Integridad de Datos:**  
-   La firma del bloque asegura que tanto las transacciones como el identificador de la tarea, la ruta de solución y la métrica alcanzada son inmutables; cualquier alteración en un solo dígito invalida el hash del bloque.
+1. **Lazy Miner Attack:**
+   Un minero no gasta CPU y envía una ruta trivial (`[0, 1, ..., N-1]`) esperando cobrar la recompensa. La red recalcula la distancia y descarta el bloque (caso **Xulio**, rechazado en las tres rondas).
+2. **Resistencia a precomputación:**
+   La semilla de búsqueda de cada minero sale del hash del bloque anterior, así que no se puede empezar a calcular antes de que exista ese bloque. Es una versión muy simplificada del pre-hash de *Ofelimos*, no su protección completa.
+3. **Integridad de datos:**
+   El hash SHA-256 del bloque cubre índice, hash previo, transacciones, tarea, ruta, distancia, minero y nonce. Cualquier cambio invalida el hash, y un bloque que no enlaza con el último de la cadena se rechaza.
 
-### D. Alcance y Límites Técnicos del Demostrador
+### D. Alcance y Límites del Demostrador
 
-Para una adecuada evaluación académica, se reconocen los siguientes límites de diseño en el prototipo local:
-* **Entorno Monoproceso:** La simulación corre de forma secuencial en un único intérprete Python para facilitar la depuración y reproducibilidad; no implementa una red P2P distribuida con latencia ni bifurcaciones concurrentes.
-* **Verificación Directa vs. SNARGs:** Para 10 ciudades, la verificación directa $O(N)$ es viable. En instancias masivas de producción (cientos de miles de variables), se requeriría incorporar argumentos sucintos no interactivos (**SNARGs**) como prescribe el protocolo *Ofelimos* (CRYPTO 2022) para evitar el *Dilema del Verificador*.
-* **Métrica Temporal:** Los tiempos de verificación en consola (`~0.000036 s`) representan la rapidez de la suma euclidiana en microsegundos, sujeta a la resolución del temporizador del sistema operativo.
+* **Monoproceso:** los mineros se ejecutan uno tras otro en un solo intérprete; no hay red P2P, latencia ni bifurcaciones.
+* **Verificación directa frente a SNARGs:** con 10 puntos, recalcular la distancia es trivial. Para instancias grandes, *Ofelimos* (CRYPTO 2022) usa pruebas sucintas (**SNARGs**). Aquí se comprueba la calidad de la ruta, no cuánto trabajo hizo el minero.
+* **Tiempos:** los ms que muestra la consola (≈0,4–1,6 ms de búsqueda frente a ≈0,02 ms de verificación) ilustran la asimetría, pero con instancias tan pequeñas no son una medida concluyente.
+* **Pagos:** los tokens son contadores. No hay transferencia real al cliente ni sanción para Xulio; solo se queda sin recompensa.
 
 ---
 
