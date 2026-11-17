@@ -1,0 +1,5 @@
+# Evidencia de ejemplo (datos ficticios) para la solicitud de cuarentena del activo 2
+2026-11-16T09:12:41Z host=WKS-0002 sensor=edr sev=high rule=T1059.001 msg="powershell.exe -enc JABjAGwAaQBlAG4AdAA..." parent=winword.exe user=jperez
+2026-11-16T09:12:43Z host=WKS-0002 sensor=edr sev=high rule=T1105 msg="descarga de binario no firmado" url=hxxp://198.51.100.23/upd.bin sha256=9f2c1e7ab4d05c6e8b1a3f0d7c2e4b6a8d0f1e3c5a7b9d1f3e5c7a9b1d3f5e7a
+2026-11-16T09:13:02Z host=WKS-0002 sensor=fw sev=medium msg="conexion saliente periodica" dst=198.51.100.23 dport=443 intervalo=60s
+2026-11-16T09:14:10Z host=WKS-0002 sensor=edr sev=high rule=T1021.002 msg="intento de movimiento lateral por SMB" dst=SRV-FILES-01

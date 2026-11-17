@@ -1,0 +1,141 @@
+body {
+  margin: 0;
+  background-color: #1e2128;
+  color: #e6e8ee;
+}
+
+.App {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+.cabecera {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.logo {
+  height: 64px;
+}
+
+h1 {
+  font-size: 1.4rem;
+  margin: 0 0 4px;
+}
+
+h2 {
+  font-size: 1.1rem;
+  margin: 0 0 8px;
+}
+
+.sub,
+.ayuda {
+  margin: 0 0 12px;
+  color: #a9afc0;
+  font-size: 0.95rem;
+}
+
+.tarjeta {
+  background-color: #282c34;
+  border: 1px solid #3a3f4b;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.9rem;
+  color: #a9afc0;
+}
+
+input[type="number"] {
+  padding: 6px 8px;
+  border-radius: 4px;
+  border: 1px solid #4a5060;
+  background-color: #1e2128;
+  color: #e6e8ee;
+  font-size: 1rem;
+  width: 180px;
+}
+
+input[type="file"] {
+  color: #e6e8ee;
+}
+
+button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 4px;
+  background-color: #8a92b2;
+  color: #14161b;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button.secundario {
+  background-color: #3a3f4b;
+  color: #e6e8ee;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.aviso {
+  padding: 10px 12px;
+  border-radius: 6px;
+  background-color: #2d3a4f;
+  margin: 0 0 16px;
+  word-break: break-word;
+}
+
+.aviso.error {
+  background-color: #5a2a2e;
+}
+
+.detalle {
+  margin-top: 16px;
+  border-top: 1px solid #3a3f4b;
+  padding-top: 12px;
+}
+
+dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 6px 16px;
+  margin: 0 0 12px;
+}
+
+dt {
+  color: #a9afc0;
+}
+
+dd {
+  margin: 0;
+  word-break: break-all;
+}
+
+a {
+  color: #9fb4ff;
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
